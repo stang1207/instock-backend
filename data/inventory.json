@@ -1,0 +1,9 @@
+[
+  {
+    "name": "Fake item name",
+    "description": "Fake item description",
+    "category": "Electronics",
+    "quantity": 10,
+    "warehouse": "Seattle"
+  }
+]

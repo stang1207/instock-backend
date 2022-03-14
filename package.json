@@ -1,0 +1,27 @@
+{
+  "name": "instock-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "watch": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stang1207/instock-backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stang1207/instock-backend/issues"
+  },
+  "homepage": "https://github.com/stang1207/instock-backend#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "morgan": "^1.10.0",
+    "uuid": "^8.3.2"
+  }
+}

@@ -1,0 +1,16 @@
+[
+  {
+    "name": "Fake warehouse name",
+    "address": {
+      "street": "469 King Street West",
+      "city": "Toronto",
+      "country": "Canada"
+    },
+    "contact": {
+      "name": "Fake Contact Name",
+      "position": "Fake Position",
+      "phone": 6145483800,
+      "email": "qweqwe@gmail.com"
+    }
+  }
+]
