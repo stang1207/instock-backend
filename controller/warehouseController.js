@@ -33,12 +33,14 @@ const getWarehouse = asyncWrapper(async (req, res, next) => {
 //Post - add a new warehouse
 const createWarehouse = asyncWrapper(async (req, res, next) => {
   //If the object failed the validation
-  if (!validiateWarehouse(req.body)) {
+  const errors = validiateWarehouse(req.body);
+  if (errors) {
     return next({
-      errorMessage: `Please provide inputs to all the required fields.`,
+      errorMessage: `Please provide inputs: ${errors.join(', ')}`,
       statusCode: 400,
     });
   }
+
   //Create new warehouse object
   const newWarehouseItem = { id: uuidv4(), ...req.body };
   //Insert into the database
@@ -56,9 +58,10 @@ const createWarehouse = asyncWrapper(async (req, res, next) => {
 const editWarehouse = asyncWrapper(async (req, res, next) => {
   const { id } = req.params;
   //If the req body failed the validation, pass the error
-  if (!validiateWarehouse(req.body)) {
+  const errors = validiateWarehouse(req.body);
+  if (errors) {
     return next({
-      errorMessage: `Please provide inputs to all the required fields.`,
+      errorMessage: `Please provide inputs: ${errors.join(', ')}`,
       statusCode: 400,
     });
   }

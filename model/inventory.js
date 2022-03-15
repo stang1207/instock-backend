@@ -6,6 +6,27 @@ const categoriesENUMS = {
 
 //Check if the object is valid
 const validateInventoryItem = (obj) => {
+  const errors = [];
+
+  if (!obj.warehouseID.trim()) {
+    errors.push('warehouseID');
+  }
+  if (!obj.warehouseName.trim()) {
+    errors.push('warehouse name');
+  }
+  if (!obj.itemName.trim()) {
+    errors.push('item name');
+  }
+  if (!obj.description.trim()) {
+    errors.push('description');
+  }
+  if (+obj.quantity < 0) {
+    errors.push('quantity');
+  }
+  if (!Object.values(categoriesENUMS).some((val) => val === obj.category)) {
+    errors.push('category');
+  }
+
   if (
     !obj.warehouseID.trim() ||
     !obj.warehouseName.trim() ||
@@ -14,9 +35,9 @@ const validateInventoryItem = (obj) => {
     Number(obj.quantity) < 0 ||
     !Object.values(categoriesENUMS).some((val) => val === obj.category)
   ) {
-    return false;
+    return errors;
   }
-  return true;
+  return null;
 };
 
 module.exports = { validateInventoryItem };

@@ -41,10 +41,11 @@ const getInventory = asyncWrapper(async (req, res, next) => {
 
 //Post - create a new invenotry item
 const createInventory = asyncWrapper(async (req, res, next) => {
-  if (!validateInventoryItem(req.body)) {
+  const errors = validateInventoryItem(req.body);
+  if (errors) {
     return next({
-      errorMessage: `Please provide valid inputs to all the required fields.`,
-      statusCode: 400,
+      errorMessage: `Please provide valid inputs: ${errors.join(', ')}`,
+      statusCode: 404,
     });
   }
   const { warehouseID } = req.body;
@@ -74,10 +75,11 @@ const createInventory = asyncWrapper(async (req, res, next) => {
 //Put - edit an inventory item
 const editInventory = asyncWrapper(async (req, res, next) => {
   const { id } = req.params;
-  if (!validateInventoryItem(req.body)) {
+  const errors = validateInventoryItem(req.body);
+  if (errors) {
     return next({
-      errorMessage: `Please provide valid inputs to all the required fields.`,
-      statusCode: 400,
+      errorMessage: `Please provide valid inputs: ${errors.join(', ')}`,
+      statusCode: 404,
     });
   }
   const updatedInventoryArray = await findByIdAndUpdate(inventoryJSON, id, {
