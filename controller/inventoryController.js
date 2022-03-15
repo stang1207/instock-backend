@@ -44,7 +44,7 @@ const createInventory = asyncWrapper(async (req, res, next) => {
   const errors = validateInventoryItem(req.body);
   if (errors) {
     return next({
-      errorMessage: `Please provide valid inputs: ${errors.join(', ')}`,
+      errorMessage: `Please provide valid inputs: ${errors.join(', ')}.`,
       statusCode: 404,
     });
   }
@@ -78,7 +78,7 @@ const editInventory = asyncWrapper(async (req, res, next) => {
   const errors = validateInventoryItem(req.body);
   if (errors) {
     return next({
-      errorMessage: `Please provide valid inputs: ${errors.join(', ')}`,
+      errorMessage: `Please provide valid inputs: ${errors.join(', ')}.`,
       statusCode: 404,
     });
   }
