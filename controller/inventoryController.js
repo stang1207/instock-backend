@@ -41,13 +41,21 @@ const getInventory = asyncWrapper(async (req, res, next) => {
 
 //Post - create a new invenotry item
 const createInventory = asyncWrapper(async (req, res, next) => {
-  const errors = validateInventoryItem(req.body);
+  const newInventoryItem = {
+    id: uuidv4(),
+    ...req.body,
+    status: Number(req.body.quantity) > 0 ? 'In Stock' : 'Out of Stock',
+    quantity: +req.body.quantity,
+  };
+  //Check if the object is valid
+  const errors = validateInventoryItem(newInventoryItem);
   if (errors) {
     return next({
       errorMessage: `Please provide valid inputs: ${errors.join(', ')}.`,
       statusCode: 404,
     });
   }
+  //Check if the warehouse exists
   const { warehouseID } = req.body;
   const foundWarehouse = await findById(warehouseJSON, warehouseID);
   if (!foundWarehouse) {
@@ -56,12 +64,6 @@ const createInventory = asyncWrapper(async (req, res, next) => {
       statusCode: 404,
     });
   }
-  const newInventoryItem = {
-    id: uuidv4(),
-    ...req.body,
-    status: Number(req.body.quantity) > 0 ? 'In Stock' : 'Out of Stock',
-    quantity: Number(req.body.quantity),
-  };
   const updatedInventoryArray = await insertInto(
     inventoryJSON,
     newInventoryItem
@@ -75,18 +77,25 @@ const createInventory = asyncWrapper(async (req, res, next) => {
 //Put - edit an inventory item
 const editInventory = asyncWrapper(async (req, res, next) => {
   const { id } = req.params;
-  const errors = validateInventoryItem(req.body);
+  const editedInventoryItem = {
+    id,
+    ...req.body,
+    quantity: +req.body.quantity,
+    status: +req.body.quantity > 0 ? 'In Stock' : 'Out of Stock',
+  };
+  //Check if the object is valid
+  const errors = validateInventoryItem(editedInventoryItem);
   if (errors) {
     return next({
       errorMessage: `Please provide valid inputs: ${errors.join(', ')}.`,
       statusCode: 404,
     });
   }
-  const updatedInventoryArray = await findByIdAndUpdate(inventoryJSON, id, {
+  const updatedInventoryArray = await findByIdAndUpdate(
+    inventoryJSON,
     id,
-    ...req.body,
-    status: Number(req.body.quantity) > 0 ? 'In Stock' : 'Out of Stock',
-  });
+    editedInventoryItem
+  );
   if (!updatedInventoryArray) {
     return next({
       errorMessage: `Can't find the inventory item associated with this id..`,

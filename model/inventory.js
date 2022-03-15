@@ -1,7 +1,10 @@
 //Enums for category field
 const categoriesENUMS = {
   1: 'Electronics',
-  2: 'Television',
+  2: 'Gear',
+  3: 'Apparel',
+  4: 'Accessories',
+  5: 'Health',
 };
 
 //Check if the object is valid
@@ -20,11 +23,14 @@ const validateInventoryItem = (obj) => {
   if (!obj.description.trim()) {
     errors.push('description');
   }
-  if (+obj.quantity < 0) {
+  if (!obj.quantity || typeof obj.quantity !== 'number' || +obj.quantity < 0) {
     errors.push('quantity');
   }
   if (!Object.values(categoriesENUMS).some((val) => val === obj.category)) {
     errors.push('category');
+  }
+  if (obj.status !== 'Out of Stock' && obj.status !== 'In Stock') {
+    errors.push('status');
   }
 
   if (errors.length > 0) {

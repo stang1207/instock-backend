@@ -38,6 +38,7 @@ const validiateWarehouse = (obj) => {
   if (errors.length > 0) {
     return errors;
   }
+
   return null;
 };
 
