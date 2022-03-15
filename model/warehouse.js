@@ -35,16 +35,7 @@ const validiateWarehouse = (obj) => {
     errors.push('Email');
   }
 
-  if (
-    !obj.name.trim() ||
-    !obj.address.trim() ||
-    !obj.city.trim() ||
-    !obj.country.trim() ||
-    !obj.contact.name.trim() ||
-    !obj.contact.position.trim() ||
-    !obj.contact.phone.trim().match(phoneRe) ||
-    !obj.contact.email.trim().match(emailRe)
-  ) {
+  if (errors.length > 0) {
     return errors;
   }
   return null;

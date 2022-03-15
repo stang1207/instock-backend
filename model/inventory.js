@@ -27,14 +27,7 @@ const validateInventoryItem = (obj) => {
     errors.push('category');
   }
 
-  if (
-    !obj.warehouseID.trim() ||
-    !obj.warehouseName.trim() ||
-    !obj.itemName.trim() ||
-    !obj.description.trim() ||
-    Number(obj.quantity) < 0 ||
-    !Object.values(categoriesENUMS).some((val) => val === obj.category)
-  ) {
+  if (errors.length > 0) {
     return errors;
   }
   return null;
