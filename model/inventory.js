@@ -12,30 +12,33 @@ const validateInventoryItem = (obj) => {
   const errors = [];
 
   if (!obj.warehouseID.trim()) {
-    errors.push('warehouseID');
+    errors.push('Warehouse ID');
   }
   if (!obj.warehouseName.trim()) {
-    errors.push('warehouse name');
+    errors.push('Warehouse name');
   }
   if (!obj.itemName.trim()) {
-    errors.push('item name');
+    errors.push('Item name');
   }
   if (!obj.description.trim()) {
-    errors.push('description');
+    errors.push('Description');
   }
   if (!obj.quantity || typeof obj.quantity !== 'number' || +obj.quantity < 0) {
-    errors.push('quantity');
+    errors.push('Quantity');
   }
   if (!Object.values(categoriesENUMS).some((val) => val === obj.category)) {
-    errors.push('category');
+    errors.push('Category');
   }
   if (obj.status !== 'Out of Stock' && obj.status !== 'In Stock') {
-    errors.push('status');
+    errors.push('Status');
   }
 
+  //If there is error, return the array containing the error
   if (errors.length > 0) {
     return errors;
   }
+
+  //If the objcet passed validation, do nothing and return null
   return null;
 };
 

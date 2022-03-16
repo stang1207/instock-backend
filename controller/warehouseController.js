@@ -2,6 +2,7 @@ const { v4: uuidv4 } = require('uuid');
 const warehouseJSON = require('path').join(__dirname, '../data/warehouse.json');
 const inventoryJSON = require('path').join(__dirname, '../data/inventory.json');
 const { asyncWrapper } = require('../utils/asyncErrorCatcher');
+const { sortBy } = require('../utils/arrayMethods');
 const { validiateWarehouse } = require('../model/warehouse');
 const {
   readData,
@@ -13,7 +14,12 @@ const {
 
 //Get - retrieve a list of warehouses
 const getWarehouses = asyncWrapper(async (req, res, next) => {
-  return res.status(200).json({ data: await readData(warehouseJSON) });
+  const warehouseArray = await readData(warehouseJSON);
+  let { sort, order } = req.query;
+  //If sort term is included in the query, then return the sorted array, else return all the warehouses as default
+  return res.status(200).json({
+    data: sort ? warehouseArray.sort(sortBy(sort, order)) : warehouseArray,
+  });
 });
 
 //Get - retrieve a warehouse

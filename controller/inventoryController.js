@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
 const { asyncWrapper } = require('../utils/asyncErrorCatcher');
+const { sortBy } = require('../utils/arrayMethods');
 const { validateInventoryItem } = require('../model/inventory.js');
 const inventoryJSON = require('path').join(__dirname, '../data/inventory.json');
 const warehouseJSON = require('path').join(__dirname, '../data/warehouse.json');
@@ -13,17 +14,24 @@ const {
 
 //Get - retrieve a list of inventories
 const getInventories = asyncWrapper(async (req, res, next) => {
-  const { warehouseID } = req.query;
+  const { warehouseID, sort, order } = req.query;
   const inventories = await readData(inventoryJSON);
-  //If warehouseID query exists, return the filtered warehouse array
+  //If warehouse id is included, send only inventory items related to that warehouse
   if (warehouseID) {
     const filteredInventories = inventories.filter(
       (item) => item.warehouseID === warehouseID
     );
-    return res.status(200).json({ data: filteredInventories });
+    //If sort is true, return the filtered and sorted inventory items, else return filtered array
+    return res.status(200).json({
+      data: sort
+        ? filteredInventories.sort(sortBy(sort, order))
+        : filteredInventories,
+    });
   }
-  //Return warehouse array
-  return res.status(200).json({ data: inventories });
+  //If sort term is included in the query, return sorted inventories items, else return all the inventories items as default
+  return res
+    .status(200)
+    .json({ data: sort ? inventories.sort(sortBy(sort, order)) : inventories });
 });
 
 //Get - retrieve an inventory item

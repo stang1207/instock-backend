@@ -1,3 +1,4 @@
+//Validate warehouse object
 const validiateWarehouse = (obj) => {
   const emailRe = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi;
   const phoneRe = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
@@ -35,10 +36,11 @@ const validiateWarehouse = (obj) => {
     errors.push('Email');
   }
 
+  //If there is error, return an array containing the error
   if (errors.length > 0) {
     return errors;
   }
-
+  //If object passed validation, do nothing and return null
   return null;
 };
 
