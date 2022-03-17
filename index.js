@@ -26,7 +26,10 @@ app.use('/inventories', inventoryRouter);
 //Error handling
 app.use((err, req, res, next) => {
   const { errorMessage, statusCode } = err;
-  return res.status(statusCode).json({ errorMessage, statusCode });
+  if (errorMessage && statusCode) {
+    return res.status(statusCode).json({ errorMessage, statusCode });
+  }
+  return res.status(500).json({ errorMessage: 'There is an error occurred!' });
 });
 
 app.listen(PORT, () => {

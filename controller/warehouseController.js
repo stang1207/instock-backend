@@ -42,7 +42,7 @@ const createWarehouse = asyncWrapper(async (req, res, next) => {
   const errors = validiateWarehouse(req.body);
   if (errors) {
     return next({
-      errorMessage: `Please provide inputs: ${errors.join(', ')}.`,
+      errorMessage: `Please provide valid inputs: ${errors.join(', ')}.`,
       statusCode: 400,
     });
   }
