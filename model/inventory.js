@@ -23,7 +23,7 @@ const validateInventoryItem = (obj) => {
   if (!obj.description.trim()) {
     errors.push('Description');
   }
-  if (!obj.quantity || typeof obj.quantity !== 'number' || +obj.quantity < 0) {
+  if (typeof obj.quantity !== 'number' || obj.quantity < 0) {
     errors.push('Quantity');
   }
   if (!Object.values(categoriesENUMS).some((val) => val === obj.category)) {

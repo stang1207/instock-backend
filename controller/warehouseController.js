@@ -2,7 +2,6 @@ const { v4: uuidv4 } = require('uuid');
 const warehouseJSON = require('path').join(__dirname, '../data/warehouse.json');
 const inventoryJSON = require('path').join(__dirname, '../data/inventory.json');
 const { asyncWrapper } = require('../utils/asyncErrorCatcher');
-const { sortBy } = require('../utils/arrayMethods');
 const { validiateWarehouse } = require('../model/warehouse');
 const {
   readData,
@@ -10,6 +9,7 @@ const {
   findByIdAndUpdate,
   findByIdAndDelete,
   insertInto,
+  sortBy,
 } = require('../utils/modifyDatabase');
 
 //Get - retrieve a list of warehouses

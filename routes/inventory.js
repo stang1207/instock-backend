@@ -6,14 +6,16 @@ const invenotryController = require('../controller/inventoryController');
 //Put - edit an inventory item
 //Delete - delete an inventory item
 router
-  .get('/:id', invenotryController.getInventory)
-  .put('/:id', invenotryController.editInventory)
-  .delete('/:id', invenotryController.deleteInventory);
+  .route('/:id')
+  .get(invenotryController.getInventory)
+  .put(invenotryController.editInventory)
+  .delete(invenotryController.deleteInventory);
 
 //Get - retrieve a list of inventory items
 //Post - create a new inventory item
 router
-  .get('/', invenotryController.getInventories)
-  .post('/', invenotryController.createInventory);
+  .route('/')
+  .get(invenotryController.getInventories)
+  .post(invenotryController.createInventory);
 
 module.exports = router;

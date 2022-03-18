@@ -6,14 +6,16 @@ const warehouseController = require('../controller/warehouseController');
 //Put - edit a warehouse
 //Delete - delete a warehouse
 router
-  .get('/:id', warehouseController.getWarehouse)
-  .put('/:id', warehouseController.editWarehouse)
-  .delete('/:id', warehouseController.deleteWarehouse);
+  .route('/:id')
+  .get(warehouseController.getWarehouse)
+  .put(warehouseController.editWarehouse)
+  .delete(warehouseController.deleteWarehouse);
 
 //Get - retrieve a list of warehouses
 //Post - create a warehouse
 router
-  .get('/', warehouseController.getWarehouses)
-  .post('/', warehouseController.createWarehouse);
+  .route('/')
+  .get(warehouseController.getWarehouses)
+  .post(warehouseController.createWarehouse);
 
 module.exports = router;
