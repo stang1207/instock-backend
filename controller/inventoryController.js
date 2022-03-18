@@ -1,10 +1,10 @@
 const { v4: uuidv4 } = require('uuid');
 const { asyncWrapper } = require('../utils/asyncErrorCatcher');
-const { sortBy } = require('../utils/arrayMethods');
 const { validateInventoryItem } = require('../model/inventory.js');
 const inventoryJSON = require('path').join(__dirname, '../data/inventory.json');
 const warehouseJSON = require('path').join(__dirname, '../data/warehouse.json');
 const {
+  sortBy,
   readData,
   findById,
   findByIdAndUpdate,
@@ -55,15 +55,17 @@ const createInventory = asyncWrapper(async (req, res, next) => {
     status: Number(req.body.quantity) > 0 ? 'In Stock' : 'Out of Stock',
     quantity: +req.body.quantity,
   };
-  //Check if the object is valid
-  const errors = validateInventoryItem(newInventoryItem);
-  if (errors) {
+  const validationErrors = validateInventoryItem(newInventoryItem);
+  if (validationErrors) {
     return next({
-      errorMessage: `Please provide valid inputs: ${errors.join(', ')}.`,
-      statusCode: 404,
+      errorMessage: `Please provide valid inputs: ${validationErrors.join(
+        ', '
+      )}`,
+      statusCode: 400,
     });
   }
-  //Check if the warehouse exists
+
+  // Check if the warehouse exists
   const { warehouseID } = req.body;
   const foundWarehouse = await findById(warehouseJSON, warehouseID);
   if (!foundWarehouse) {
@@ -72,6 +74,7 @@ const createInventory = asyncWrapper(async (req, res, next) => {
       statusCode: 404,
     });
   }
+
   const updatedInventoryArray = await insertInto(
     inventoryJSON,
     newInventoryItem
@@ -91,14 +94,16 @@ const editInventory = asyncWrapper(async (req, res, next) => {
     quantity: +req.body.quantity,
     status: +req.body.quantity > 0 ? 'In Stock' : 'Out of Stock',
   };
-  //Check if the object is valid
-  const errors = validateInventoryItem(editedInventoryItem);
-  if (errors) {
+  const validationErrors = validateInventoryItem(editedInventoryItem);
+  if (validationErrors) {
     return next({
-      errorMessage: `Please provide valid inputs: ${errors.join(', ')}.`,
-      statusCode: 404,
+      errorMessage: `Please provide valid inputs: ${validationErrors.join(
+        ', '
+      )}`,
+      statusCode: 400,
     });
   }
+
   const updatedInventoryArray = await findByIdAndUpdate(
     inventoryJSON,
     id,
