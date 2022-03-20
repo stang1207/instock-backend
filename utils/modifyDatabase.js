@@ -20,19 +20,24 @@ const findById = async (filePath, id) => {
 
 //Find an item in array and update it
 const findByIdAndUpdate = async (filePath, id, data) => {
+  //First check if the item actually exists
   const dataArray = await readData(filePath);
   let foundItemIndex = dataArray.findIndex((item) => item.id === id);
   if (foundItemIndex < 0) return false;
+  //If item exists, then spread the values into a new object
   dataArray[foundItemIndex] = { ...data };
+  //Insert the new edited object into the database
   await saveData(filePath, dataArray);
   return dataArray;
 };
 
 //Find an item in array and delete it
 const findByIdAndDelete = async (filePath, id, targetId = 'id') => {
+  //First check if the item actually exists
   const dataArray = await readData(filePath);
   const foundItem = dataArray.find((item) => item[targetId] === id);
   if (!foundItem) return false;
+  //If there is an item with same id, then remove it with filter
   const updatedArray = dataArray.filter((item) => item[targetId] !== id);
   await saveData(filePath, updatedArray);
   return updatedArray;
@@ -46,6 +51,7 @@ const insertInto = async (filePath, data) => {
   return dataArray;
 };
 
+//Sorting list function
 const sortBy = (key, order = 'asc') => {
   return (a, b) => {
     const getValue = (object, keys) => {

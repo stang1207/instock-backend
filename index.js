@@ -1,35 +1,39 @@
+//Express import
 const express = require('express');
 const app = express();
 
+//Enable env and create a port number
 require('dotenv').config();
-const path = require('path');
-const cors = require('cors');
-const logger = require('morgan');
 const PORT = process.env.PORT || 9000;
 
+//Import Common express middlewares
+const cors = require('cors');
+const logger = require('morgan');
+
+//Import Routes
 const warehouseRouter = require('./routes/warehouse');
 const inventoryRouter = require('./routes/inventory');
 
+//Import Error Handler
+const { CustomErrorHandler, CustomError } = require('./utils/CustomError');
+
+//Enable morgan if in the dev mode
 if (process.env.NODE_ENVIRONMENT === 'development') {
   app.use(logger('dev'));
 }
 
+// Allow cors and run body parser
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
 
 //Routes
 app.use('/warehouses', warehouseRouter);
 app.use('/inventories', inventoryRouter);
 
-//Error handling
+//Error handler who responsibes for returning errorMsg and statusCode
 app.use((err, req, res, next) => {
-  const { errorMessage, statusCode } = err;
-  if (errorMessage && statusCode) {
-    return res.status(statusCode).json({ errorMessage, statusCode });
-  }
-  return res.status(500).json({ errorMessage: 'There is an error occurred!' });
+  return CustomErrorHandler(err, res);
 });
 
 app.listen(PORT, () => {

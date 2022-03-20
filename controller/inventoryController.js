@@ -1,8 +1,6 @@
-const { v4: uuidv4 } = require('uuid');
-const { asyncWrapper } = require('../utils/asyncErrorCatcher');
-const { validateInventoryItem } = require('../model/inventory.js');
 const inventoryJSON = require('path').join(__dirname, '../data/inventory.json');
 const warehouseJSON = require('path').join(__dirname, '../data/warehouse.json');
+const { CustomError } = require('../utils/CustomError');
 const {
   sortBy,
   readData,
@@ -13,7 +11,7 @@ const {
 } = require('../utils/modifyDatabase');
 
 //Get - retrieve a list of inventories
-const getInventories = asyncWrapper(async (req, res, next) => {
+const getInventories = async (req, res) => {
   const { warehouseID, sort, order } = req.query;
   const inventories = await readData(inventoryJSON);
   //If warehouse id is included, send only inventory items related to that warehouse
@@ -32,110 +30,73 @@ const getInventories = asyncWrapper(async (req, res, next) => {
   return res
     .status(200)
     .json({ data: sort ? inventories.sort(sortBy(sort, order)) : inventories });
-});
+};
 
 //Get - retrieve an inventory item
-const getInventory = asyncWrapper(async (req, res, next) => {
+const getInventory = async (req, res) => {
   const { id } = req.params;
   const foundInventory = await findById(inventoryJSON, id);
   if (!foundInventory) {
-    return next({
-      errorMessage: `Can't find the inventory item associated with this id!`,
-      statusCode: 404,
-    });
+    throw new CustomError(404, `Can't find the inventory item with this id.`);
   }
   return res.status(200).json({ data: foundInventory });
-});
+};
 
 //Post - create a new invenotry item
-const createInventory = asyncWrapper(async (req, res, next) => {
-  const newInventoryItem = {
-    id: uuidv4(),
-    ...req.body,
-    status: Number(req.body.quantity) > 0 ? 'In Stock' : 'Out of Stock',
-    quantity: +req.body.quantity,
-  };
-  const validationErrors = validateInventoryItem(newInventoryItem);
-  if (validationErrors) {
-    return next({
-      errorMessage: `Please provide valid inputs: ${validationErrors.join(
-        ', '
-      )}`,
-      statusCode: 400,
-    });
-  }
-
-  // Check if the warehouse exists
+const createInventory = async (req, res) => {
+  // Check if the warehouse exists and throw error if it doesn't
   const { warehouseID } = req.body;
   const foundWarehouse = await findById(warehouseJSON, warehouseID);
   if (!foundWarehouse) {
-    return next({
-      errorMessage: `Can't find the warehouse associated with this id.`,
-      statusCode: 404,
-    });
+    throw new CustomError(404, `Can't find the warehouse with this id.`);
   }
-
+  // inventory data that is already validated by the middleware
+  const validatedInventoryItem = req.validatedData;
+  // Insert the validated inventory item into the database
   const updatedInventoryArray = await insertInto(
     inventoryJSON,
-    newInventoryItem
+    validatedInventoryItem
   );
   return res.status(201).json({
     data: updatedInventoryArray,
     message: 'New inventory item has been added!',
   });
-});
+};
 
 //Put - edit an inventory item
-const editInventory = asyncWrapper(async (req, res, next) => {
+const editInventory = async (req, res) => {
   const { id } = req.params;
-  const editedInventoryItem = {
-    id,
-    ...req.body,
-    quantity: +req.body.quantity,
-    status: +req.body.quantity > 0 ? 'In Stock' : 'Out of Stock',
-  };
-  const validationErrors = validateInventoryItem(editedInventoryItem);
-  if (validationErrors) {
-    return next({
-      errorMessage: `Please provide valid inputs: ${validationErrors.join(
-        ', '
-      )}`,
-      statusCode: 400,
-    });
-  }
-
+  // inventory data that is already validated by the middleware
+  const validatedInventoryItem = req.validatedData;
+  // insert the edited data into the database
   const updatedInventoryArray = await findByIdAndUpdate(
     inventoryJSON,
     id,
-    editedInventoryItem
+    validatedInventoryItem
   );
+  //If if the inventory item with this id is not found, throw error
   if (!updatedInventoryArray) {
-    return next({
-      errorMessage: `Can't find the inventory item associated with this id..`,
-      statusCode: 404,
-    });
+    throw new CustomError(404, `Can't find the inventory item with this id.`);
   }
   return res.status(200).json({
     data: updatedInventoryArray,
     message: 'The inventory item has been edited',
   });
-});
+};
 
 //Delete - delete an invenotry item
-const deleteInventory = asyncWrapper(async (req, res, next) => {
+const deleteInventory = async (req, res) => {
   const { id } = req.params;
+  //Check if the inventory item exists, either throw error or delete the item
   const updatedInventoryArray = await findByIdAndDelete(inventoryJSON, id);
   if (!updatedInventoryArray) {
-    return next({
-      errorMessage: `Can't find the inventory item associated with this id.`,
-      statusCode: 404,
-    });
+    throw new CustomError(404, `Can't find the inventory item with this id.`);
   }
   return res.status(200).json({
     data: updatedInventoryArray,
     message: 'The inventory item has been deleted',
   });
-});
+};
 
 module.exports = {
   getInventories,

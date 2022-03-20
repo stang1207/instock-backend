@@ -1,10 +1,10 @@
-//Async error middleware
-const asyncWrapper = (callbackFunc) => {
+//Async error catcher middleware
+const asyncErrorCatcher = (callbackFunc) => {
   return function (req, res, next) {
     return callbackFunc(req, res, next).catch((err) => {
-      next(err);
+      return next(err);
     });
   };
 };
 
-module.exports = { asyncWrapper };
+module.exports = { asyncErrorCatcher };
